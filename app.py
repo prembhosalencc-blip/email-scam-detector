@@ -1,8 +1,8 @@
 import streamlit as st
 import joblib
 
-model = joblib.load(r"C:\Users\Prem Bhosale\OneDrive\Documents\project of ml\spam_model.pkl")
-vectorizer = joblib.load(r"C:\Users\Prem Bhosale\OneDrive\Documents\project of ml\vectorizer.pkl")
+model = joblib.load("spam_model.pkl")
+vectorizer = joblib.load("vectorizer.pkl")
 
 st.title("Email Scam Detector")
 
@@ -16,3 +16,4 @@ if st.button("Check"):
         st.write(result)
     else:
         st.write("Please enter some text")
+
