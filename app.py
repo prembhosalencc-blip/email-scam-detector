@@ -1,6 +1,5 @@
 import streamlit as st
 import joblib
-import numpy as np
 import pandas as pd
 import altair as alt
 
@@ -23,27 +22,32 @@ if st.button("Check"):
         spam_prob = probability[1] * 100
         safe_prob = probability[0] * 100
 
-        result = "🚨 Spam / Scam" if prediction == 1 else "✅ Safe / Not Spam"
-        st.markdown(f"### Prediction: {result}")
+        result_text = "🚨 Spam / Scam" if prediction == 1 else "✅ Safe / Not Spam"
+        result_color = "red" if prediction == 1 else "green"
+
+        st.markdown(f"### Prediction: <span style='color:{result_color}'>{result_text}</span>", unsafe_allow_html=True)
         st.markdown(f"**Probability:** Safe: {safe_prob:.2f}% | Spam: {spam_prob:.2f}%")
 
-        # Progress bars for probabilities
-        st.progress(int(safe_prob) if prediction==0 else int(spam_prob))
+        st.progress(int(spam_prob) if prediction == 1 else int(safe_prob))
 
-        # Pie chart
         prob_df = pd.DataFrame({
             'Category': ['Safe', 'Spam'],
             'Probability': [safe_prob, spam_prob]
         })
 
-        chart = alt.Chart(prob_df).mark_arc(innerRadius=50).encode(
+        pie_chart = alt.Chart(prob_df).mark_arc(innerRadius=50).encode(
             theta=alt.Theta(field="Probability", type="quantitative"),
             color=alt.Color(field="Category", type="nominal"),
             tooltip=['Category', 'Probability']
         )
+        st.altair_chart(pie_chart, use_container_width=True)
 
-        st.altair_chart(chart, use_container_width=True)
-
+        bar_chart = alt.Chart(prob_df).mark_bar().encode(
+            x='Category',
+            y='Probability',
+            color='Category',
+            tooltip=['Category', 'Probability']
+        )
+        st.altair_chart(bar_chart, use_container_width=True)
     else:
         st.warning("⚠️ Please enter some text to analyze.")
-
