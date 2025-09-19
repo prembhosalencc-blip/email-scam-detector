@@ -10,29 +10,9 @@ vectorizer = joblib.load("vectorizer.pkl")
 
 st.markdown("<h1 style='text-align:center; color:#4B0082;'>📧 Email Scam Detector Application</h1>", unsafe_allow_html=True)
 
-tab1, tab2 = st.tabs(["🔍 Prediction", "📊 Dashboard"])
+tab1, tab2 = st.tabs(["📊 Dashboard", "🔍 Prediction"])
 
 with tab1:
-    st.subheader("Email Scam Prediction")
-    email_text = st.text_area("Enter the email text below:")
-    if st.button("Analyze", key="predict_btn"):
-        if email_text.strip():
-            X = vectorizer.transform([email_text])
-            prediction = model.predict(X)[0]
-            probability = model.predict_proba(X)[0]
-            safe_prob = probability[0] * 100
-            spam_prob = probability[1] * 100
-            if prediction == 1:
-                st.markdown(f"<h2 style='color:red; text-align:center;'>🚨 Spam / Scam</h2>", unsafe_allow_html=True)
-            else:
-                st.markdown(f"<h2 style='color:green; text-align:center;'>✅ Safe / Not Spam</h2>", unsafe_allow_html=True)
-            col1, col2 = st.columns(2)
-            col1.metric("✅ Safe Probability", f"{safe_prob:.2f}%")
-            col2.metric("🚨 Spam Probability", f"{spam_prob:.2f}%")
-        else:
-            st.warning("⚠️ Please enter some text to analyze.")
-
-with tab2:
     st.subheader("Email Scam Detector Dashboard")
     data = {
         "Emails Checked": 150,
@@ -70,3 +50,23 @@ with tab2:
         color="Category:N"
     )
     st.altair_chart(trend_chart, use_container_width=True)
+
+with tab2:
+    st.subheader("Email Scam Prediction")
+    email_text = st.text_area("Enter the email text below:")
+    if st.button("Analyze", key="predict_btn"):
+        if email_text.strip():
+            X = vectorizer.transform([email_text])
+            prediction = model.predict(X)[0]
+            probability = model.predict_proba(X)[0]
+            safe_prob = probability[0] * 100
+            spam_prob = probability[1] * 100
+            if prediction == 1:
+                st.markdown(f"<h2 style='color:red; text-align:center;'>🚨 Spam / Scam</h2>", unsafe_allow_html=True)
+            else:
+                st.markdown(f"<h2 style='color:green; text-align:center;'>✅ Safe / Not Spam</h2>", unsafe_allow_html=True)
+            col1, col2 = st.columns(2)
+            col1.metric("✅ Safe Probability", f"{safe_prob:.2f}%")
+            col2.metric("🚨 Spam Probability", f"{spam_prob:.2f}%")
+        else:
+            st.warning("⚠️ Please enter some text to analyze.")
