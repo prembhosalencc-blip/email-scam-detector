@@ -53,7 +53,18 @@ with tab1:
 
 with tab2:
     st.subheader("Email Scam Prediction")
-    email_text = st.text_area("Enter the email text below:")
+
+    scam_examples = [
+        "Congratulations! You won $1000. Claim now at http://fakeprize.com",
+        "Your account has been suspended. Verify immediately at http://fakebank.com",
+        "Work from home and earn $5000 weekly! Join at http://fakejob.com",
+        "You have been selected to receive a lottery prize. Send your details now.",
+        "Please donate urgently to our disaster relief fund at account 123456789"
+    ]
+
+    selected_example = st.selectbox("Choose an example scam email:", [""] + scam_examples)
+    email_text = st.text_area("Or enter your own email text:", value=selected_example if selected_example else "")
+
     if st.button("Analyze", key="predict_btn"):
         if email_text.strip():
             X = vectorizer.transform([email_text])
@@ -69,4 +80,4 @@ with tab2:
             col1.metric("✅ Safe Probability", f"{safe_prob:.2f}%")
             col2.metric("🚨 Spam Probability", f"{spam_prob:.2f}%")
         else:
-            st.warning("⚠️ Please enter some text to analyze.")
+            st.warning("⚠️ Please enter or select some text to analyze.")
