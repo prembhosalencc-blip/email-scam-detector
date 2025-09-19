@@ -11,20 +11,16 @@ vectorizer = joblib.load("vectorizer.pkl")
 st.markdown("<h1 style='text-align:center; color:#4B0082;'>📧 Email Scam Detector Dashboard</h1>", unsafe_allow_html=True)
 
 email_text = st.sidebar.text_area("Enter Email Text Here")
-section = st.sidebar.selectbox("Select Section to View", ["Prediction", "Probabilities", "Pie Chart", "Bar Graph"])
+section = st.sidebar.selectbox("Select Section to View", ["Prediction", "Probabilities", "Pie Chart", "Bar Graph", "Dashboard KPIs"])
 analyze_btn = st.sidebar.button("Analyze")
 
 if analyze_btn and email_text.strip():
     X = vectorizer.transform([email_text])
     prediction = model.predict(X)[0]
     probability = model.predict_proba(X)[0]
-
     safe_prob = probability[0] * 100
     spam_prob = probability[1] * 100
-    prob_df = pd.DataFrame({
-        "Category": ["Safe", "Spam"],
-        "Probability": [safe_prob, spam_prob]
-    })
+    prob_df = pd.DataFrame({"Category": ["Safe", "Spam"], "Probability": [safe_prob, spam_prob]})
 
     if section == "Prediction":
         st.markdown("## Prediction")
@@ -57,6 +53,14 @@ if analyze_btn and email_text.strip():
             tooltip=["Category","Probability"]
         )
         st.altair_chart(bar_chart, use_container_width=True)
+
+    elif section == "Dashboard KPIs":
+        st.markdown("## Dashboard KPIs")
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("📧 Emails Checked", "1")
+        col2.metric("🚨 Spam Probability", f"{spam_prob:.2f}%")
+        col3.metric("✅ Safe Probability", f"{safe_prob:.2f}%")
+        col4.metric("🎯 Prediction", "Spam" if prediction == 1 else "Safe")
 
 elif analyze_btn and not email_text.strip():
     st.sidebar.warning("⚠️ Please enter some text to analyze.")
