@@ -8,12 +8,14 @@ st.set_page_config(page_title="📧 Email Scam Detector", layout="wide")
 model = joblib.load("spam_model.pkl")
 vectorizer = joblib.load("vectorizer.pkl")
 
-menu = st.sidebar.radio("📌 Select Page", ["Prediction", "Dashboard"])
+st.markdown("<h1 style='text-align:center; color:#4B0082;'>📧 Email Scam Detector Application</h1>", unsafe_allow_html=True)
 
-if menu == "Prediction":
-    st.markdown("<h1 style='text-align:center; color:#4B0082;'>📧 Email Scam Detector</h1>", unsafe_allow_html=True)
+tab1, tab2 = st.tabs(["🔍 Prediction", "📊 Dashboard"])
+
+with tab1:
+    st.subheader("Email Scam Prediction")
     email_text = st.text_area("Enter the email text below:")
-    if st.button("Analyze"):
+    if st.button("Analyze", key="predict_btn"):
         if email_text.strip():
             X = vectorizer.transform([email_text])
             prediction = model.predict(X)[0]
@@ -30,8 +32,8 @@ if menu == "Prediction":
         else:
             st.warning("⚠️ Please enter some text to analyze.")
 
-elif menu == "Dashboard":
-    st.markdown("<h1 style='text-align:center; color:#0066cc;'>📊 Scam Detector Dashboard</h1>", unsafe_allow_html=True)
+with tab2:
+    st.subheader("Email Scam Detector Dashboard")
     data = {
         "Emails Checked": 150,
         "Spam Detected": 65,
